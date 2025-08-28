@@ -124,6 +124,7 @@ export const AddressesPage = () => {
                 <p className="bg-green-100 p-3 text-xl">{"It's now saved!"}</p>
                 <br />
                 <button
+                    data-test="add-more-control"
                     onClick={handleAddAddress}
                     className="mt-3 border-1 rounded px-4 "
                 >
@@ -136,7 +137,7 @@ export const AddressesPage = () => {
     return (
         <FocusPageLayout>
             <HeroTitle title="Campus Addresses" />
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} data-test="address-form">
                 {generalError && <p>{generalError}</p>}
                 {fields && (
                     <>
@@ -198,6 +199,7 @@ export const AddressesPage = () => {
                                 </div>
                             ))}
                         <input
+                            data-test="submit-control"
                             type="submit"
                             value="Save"
                             disabled={isLoading}
