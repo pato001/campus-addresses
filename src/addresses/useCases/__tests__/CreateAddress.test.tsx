@@ -52,4 +52,50 @@ describe('Create Address', () => {
         cy.url().should('include', '/addresses');
         cy.get('input[name="street"]').should('be.empty');
     });
+    it('create international address', () => {
+        cy.intercept('GET', '**/address-fields/local', {body:{}})
+        cy.intercept('GET', '**/address-fields/international', {
+            body: {
+                street: {
+                    label: 'Street',
+                    requirement: 'MANDATORY',
+                },
+                postalCode: {
+                    label: 'Post code',
+                    requirement: 'MANDATORY',
+                },
+                townName: {
+                    label: 'City',
+                    requirement: 'MANDATORY',
+                },
+                country: {
+                    label: 'Country',
+                    requirement: 'MANDATORY',
+                },
+            },
+        });
+        cy.intercept('POST', '**/addresses', {
+            body: {
+                street: 'Baker Street 22',
+                postalCode: 'NW1 6XE',
+                townName: 'London',
+                country: 'Brazil',
+            },
+        });
+
+        cy.mount(<App />, '/addresses');
+
+        cy.getByTestId('type-control').select('International');
+
+        cy.get('input[name="street"]').type('Baker Street 22');
+        cy.get('input[name="postalCode"]').type('NW1 6XE');
+        cy.get('input[name="townName"]').type('London');
+        cy.get('select[name="country"]').select('Brazil');
+
+        cy.getByTestId('submit-control').click();
+
+        cy.contains("It's now saved!").should('be.visible');
+        cy.getByTestId('address-form').should('not.exist');
+
+    });
 });

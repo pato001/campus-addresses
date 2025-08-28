@@ -1,6 +1,7 @@
 import { FocusPageLayout, HeroTitle } from '@design-system';
 import { type ChangeEvent, type FormEvent, useEffect, useState } from 'react';
 import { object, string, ValidationError } from 'yup';
+import data from '../../../node_modules/type-fest/source/readonly-deep.d';
 
 type Field = {
     label: string;
@@ -146,6 +147,7 @@ export const AddressesPage = () => {
                                 Type
                             </label>
                             <select
+                                data-test="type-control"
                                 id="type"
                                 name="type"
                                 value={selected}
