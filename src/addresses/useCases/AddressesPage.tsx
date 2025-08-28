@@ -1,24 +1,9 @@
 import { FocusPageLayout, HeroTitle } from '@design-system';
 import { type ChangeEvent, type FormEvent, useEffect, useState } from 'react';
-import { object, string, ValidationError } from 'yup';
-import data from '../../../node_modules/type-fest/source/readonly-deep.d';
+import { ValidationError } from 'yup';
+import { createAddressModel, Fields } from './createAddressModel';
 
-type Field = {
-    label: string;
-    requirement: 'MANDATORY' | 'OPTIONAL';
-    maxLength?: number;
-    disabled?: boolean;
-    value?: string;
-};
-type Fields = Partial<{
-    buildingName: Field;
-    street: Field;
-    districtName: Field;
-    postalCode: Field;
-    townName: Field;
-    regionName: Field;
-    country: Field;
-}>;
+
 
 export const AddressesPage = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -28,6 +13,7 @@ export const AddressesPage = () => {
     const [selected, setSelected] = useState<string>('local');
     const [fields, setFields] = useState<Fields>();
 
+    const {validate} = createAddressModel(fields || {});
     const handleTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
         setSelected(e.target.value);
     };
@@ -45,17 +31,7 @@ export const AddressesPage = () => {
         setGeneralError(undefined);
 
         try {
-            const schema = Object.entries(fields).reduce((result, [key, field]) => {
-                if (field.requirement !== 'MANDATORY') {
-                    return result;
-                }
-
-                return {
-                    ...result,
-                    [key]: string().required(`${field.label} is missing.`),
-                };
-            }, {});
-            const address = object(schema).validateSync(data, { abortEarly: false });
+            const address= validate(data)
 
             setIsLoading(true);
 
